@@ -496,11 +496,6 @@
                         <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8 md:gap-16">
                             <div className="flex-1 text-center md:text-left text-white z-10 relative">
                                 
-                                {/* LOGO WATERMARK - Posicionado atrás do texto */}
-                                <div className="absolute top-1/2 left-1/2 md:left-10 transform -translate-x-1/2 -translate-y-1/2 w-64 md:w-96 opacity-10 pointer-events-none select-none z-0 mix-blend-overlay">
-                                    <img src={LOGO_URL} alt="" className="w-full h-full object-contain grayscale brightness-200" onError={(e) => e.target.style.display='none'} />
-                                </div>
-
                                 <div className="relative z-10">
                                     <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold tracking-wider uppercase mb-4 border border-white/30">
                                         {isWholesale ? 'Preços de Fábrica' : 'Entrega Rápida'}
