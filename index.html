@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cantinho da Limpeza - Distribuidora</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        h1, h2, h3, h4, h5, h6, .font-display { font-family: 'Montserrat', sans-serif; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse-soft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+        
+        .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+        .animate-slide-up { animation: slideUp 0.5s ease-out forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 pb-20 md:pb-0 selection:bg-orange-200 selection:text-orange-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- Configurações ---
+        const LOGO_URL = "./WhatsApp Image 2026-01-18 at 21.38.34.jpeg";
+        const WHATSAPP_NUMBER = "557999492733"; // Número atualizado
+
+        // --- Paleta de Cores dos Produtos ---
+        const PRODUCT_COLORS = {
+            eucalipto: { primary: "#0d9488", secondary: "#5eead4" }, // Teal
+            palmolive: { primary: "#4ade80", secondary: "#bbf7d0" }, // Green
+            jasmim: { primary: "#facc15", secondary: "#fef08a" }, // Yellow
+            lavanda: { primary: "#a855f7", secondary: "#e9d5ff" }, // Purple
+            brisa: { primary: "#3b82f6", secondary: "#bfdbfe" }, // Blue
+            alfazema: { primary: "#8b5cf6", secondary: "#ddd6fe" }, // Indigo
+            dama: { primary: "#4c1d95", secondary: "#c4b5fd" }, // Deep Purple
+            talco: { primary: "#f472b6", secondary: "#fbcfe8" }, // Pink
+            girassol: { primary: "#eab308", secondary: "#fde047" }, // Amber
+            floral: { primary: "#ec4899", secondary: "#fce7f3" }, // Rose
+            kayak: { primary: "#0284c7", secondary: "#bae6fd" }, // Sky
+            natura: { primary: "#22c55e", secondary: "#86efac" }, // Green
+            glade: { primary: "#d946ef", secondary: "#f5d0fe" }, // Fuchsia
+            capim: { primary: "#84cc16", secondary: "#d9f99d" }, // Lime
+            neutro: { primary: "#94a3b8", secondary: "#e2e8f0" }, // Gray
+            maca: { primary: "#ef4444", secondary: "#fecaca" }, // Red
+            coco: { primary: "#f5f5f4", secondary: "#ffffff", border: "#e7e5e4" }, // White
+            pinho: { primary: "#166534", secondary: "#4ade80" }, // Dark Green
+            jamaica: { primary: "#1d4ed8", secondary: "#60a5fa" }, // Dark Blue
+            dove: { primary: "#38bdf8", secondary: "#e0f2fe" }, // Light Blue
+            erva: { primary: "#a3e635", secondary: "#ecfccb" }, // Light Green
+            preto: { primary: "#1f2937", secondary: "#4b5563" }, // Black
+        };
+
+        // --- Ilustrações SVG (Componentes) ---
+        const SVGBottle2L = ({ color }) => (
+            <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-md">
+                <defs>
+                    <linearGradient id={`grad-${color.primary}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: color.secondary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: color.primary, stopOpacity:1}} />
+                    </linearGradient>
+                </defs>
+                <path d="M35,10 L65,10 L65,25 Q65,40 80,50 L80,110 Q80,120 70,120 L30,120 Q20,120 20,110 L20,50 Q35,40 35,25 Z" fill={`url(#grad-${color.primary})`} stroke={color.border || "none"} strokeWidth="1"/>
+                <rect x="35" y="0" width="30" height="10" fill={color.primary} rx="2" />
+                <rect x="30" y="55" width="40" height="40" rx="2" fill="white" opacity="0.9" />
+                <rect x="35" y="65" width="30" height="4" rx="1" fill={color.primary} />
+                <rect x="35" y="75" width="20" height="2" rx="1" fill="#cbd5e1" />
+                <text x="50" y="88" fontSize="8" textAnchor="middle" fill="#64748b" fontWeight="bold">2L</text>
+            </svg>
+        );
+
+        const SVGGalao5L = ({ color }) => (
+            <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-lg">
+                <defs>
+                    <linearGradient id={`grad5-${color.primary}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style={{stopColor: color.secondary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: color.primary, stopOpacity:1}} />
+                    </linearGradient>
+                </defs>
+                <path d="M20,30 L30,10 L50,10 L50,20 L70,20 L85,35 L85,110 Q85,120 75,120 L25,120 Q15,120 15,110 L15,40 Q15,30 20,30 Z" fill={`url(#grad5-${color.primary})`} stroke={color.border || "none"} strokeWidth="1"/>
+                <path d="M35,10 L45,10 L45,25 L25,25 Z" fill={color.primary} /> 
+                <rect x="25" y="50" width="50" height="50" rx="4" fill="white" opacity="0.95" />
+                <circle cx="50" cy="75" r="15" fill={color.secondary} opacity="0.3" />
+                <text x="50" y="80" fontSize="12" textAnchor="middle" fill={color.primary} fontWeight="bold">5L</text>
+            </svg>
+        );
+
+        const SVGPote = ({ color }) => (
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                 <defs>
+                    <linearGradient id={`gradPote-${color.primary}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style={{stopColor: color.primary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: color.secondary, stopOpacity:1}} />
+                    </linearGradient>
+                </defs>
+                <path d="M20,40 L80,40 L75,90 Q75,95 70,95 L30,95 Q25,95 25,90 Z" fill={`url(#gradPote-${color.primary})`} />
+                <rect x="15" y="30" width="70" height="10" rx="2" fill={color.primary} />
+                <rect x="30" y="55" width="40" height="25" rx="2" fill="white" opacity="0.9" />
+                 <text x="50" y="72" fontSize="6" textAnchor="middle" fill="#64748b">PASTA</text>
+            </svg>
+        );
+
+        const SVGFrasco = ({ color }) => (
+            <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-sm">
+                 <defs>
+                    <linearGradient id={`gradFrasco-${color.primary}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: color.secondary, stopOpacity:1}} />
+                        <stop offset="100%" style={{stopColor: color.primary, stopOpacity:1}} />
+                    </linearGradient>
+                </defs>
+                <rect x="35" y="40" width="30" height="70" rx="5" fill={`url(#gradFrasco-${color.primary})`} />
+                <rect x="40" y="30" width="20" height="10" fill={color.primary} />
+                <rect x="30" y="25" width="40" height="5" rx="2" fill="white" stroke={color.primary} strokeWidth="2" />
+                <rect x="40" y="60" width="20" height="30" fill="white" opacity="0.8" rx="2" />
+            </svg>
+        );
+
+         // --- Dados dos Produtos (Com metadados de imagem) ---
+         const PRODUCTS = [
+             // LIMPADORES 2L (DESINFETANTES) - PREÇO R$ 5,00
+            { id: 2006, name: "Limpador Eucalipto 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_2l.jpg", type: "bottle" },
+            { id: 2009, name: "Limpador Palmolive 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "palmolive", image: "./imagens/limpador_palmolive_2l.jpg", type: "bottle" },
+            { id: 2013, name: "Limpador Jasmim 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "jasmim", image: "./imagens/limpador_jasmim_2l.jpg", type: "bottle" },
+            { id: 2008, name: "Limpador Lavanda Herbal 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "lavanda", image: "./imagens/limpador_lavanda_herbal_2l.jpg", type: "bottle" },
+            { id: 2012, name: "Limpador Brisa 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "brisa", image: "./imagens/limpador_brisa_2l.jpg", type: "bottle" },
+            { id: 2011, name: "Limpador Alfazema 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "alfazema", image: "./imagens/limpador_alfazema_2l.jpg", type: "bottle" },
+            { id: 2002, name: "Limpador Dama da Noite 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "dama", image: "./imagens/limpador_dama_da_noite_2l.jpg", type: "bottle" },
+            { id: 2004, name: "Limpador Talco 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "talco", image: "./imagens/limpador_talco_2l.jpg", type: "bottle" },
+            { id: 2014, name: "Limpador Girassol 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "girassol", image: "./imagens/limpador_girassol_2l.jpg", type: "bottle" },
+            { id: 2001, name: "Limpador Floral Frutal 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "floral", image: "./imagens/limpador_floral_frutal_2l.jpg", type: "bottle" },
+            { id: 2003, name: "Limpador Kayak 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "kayak", image: "./imagens/limpador_kayak_2l.jpg", type: "bottle" },
+            { id: 2010, name: "Limpador Natura 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "natura", image: "./imagens/limpador_natura_2l.jpg", type: "bottle" },
+            { id: 2007, name: "Limpador Lavanda Glade 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "glade", image: "./imagens/limpador_lavanda_glade_2l.jpg", type: "bottle" },
+            { id: 2005, name: "Limpador Capim Limão 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "capim", image: "./imagens/limpador_capim_limao_2l.jpg", type: "bottle" },
+
+            // LIMPADORES 5L
+            { id: 2056, name: "Limpador Eucalipto 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_5l.jpg", type: "galao" },
+            { id: 2059, name: "Limpador Jasmim 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "jasmim", image: "./imagens/limpador_jasmim_5l.jpg", type: "galao" },
+            { id: 2058, name: "Limpador Lavanda Herbal 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "lavanda", image: "./imagens/limpador_lavanda_herbal_5l.jpg", type: "galao" },
+            { id: 2052, name: "Limpador Dama da Noite 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "dama", image: "./imagens/limpador_dama_da_noite_5l.jpg", type: "galao" },
+            { id: 2054, name: "Limpador Talco 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "talco", image: "./imagens/limpador_talco_5l.jpg", type: "galao" },
+            { id: 2053, name: "Limpador Kayak 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "kayak", image: "./imagens/limpador_kayak_5l.jpg", type: "galao" },
+            { id: 2055, name: "Limpador Capim Limão 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/limpador_capim_limao_5l.jpg", type: "galao" },
+
+            // CONCENTRADOS (BASE DESINFETANTE) - PREÇO R$ 6,00
+            { id: 209, name: "Concentrado Jasmim 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "jasmim", image: "./imagens/concentrado_jasmim_500ml.jpg", type: "frasco" },
+            { id: 208, name: "Concentrado Lavanda 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "lavanda", image: "./imagens/concentrado_lavanda_500ml.jpg", type: "frasco" },
+            { id: 202, name: "Concentrado Dama Noite 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "dama", image: "./imagens/concentrado_dama_noite_500ml.jpg", type: "frasco" },
+            { id: 206, name: "Concentrado Eucalipto 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "eucalipto", image: "./imagens/concentrado_eucalipto_500ml.jpg", type: "frasco" },
+
+            // SABÃO LÍQUIDO 2L - PREÇO R$ 6,00
+            { id: 420, name: "Sabão Líq. Jamaica 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "jamaica", image: "./imagens/sabao_jamaica_2l.jpg", type: "bottle" },
+            { id: 450, name: "Sabão Líq. Jamaica 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "jamaica", image: "./imagens/sabao_jamaica_5l.jpg", type: "galao" },
+            { id: 421, name: "Sabão Líq. Dove 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "dove", image: "./imagens/sabao_dove_2l.jpg", type: "bottle" },
+            { id: 452, name: "Sabão Líq. Dove 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "dove", image: "./imagens/sabao_dove_5l.jpg", type: "galao" },
+            { id: 422, name: "Sabão Líq. Erva Doce 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "erva", image: "./imagens/sabao_erva_doce_2l.jpg", type: "bottle" },
+            { id: 453, name: "Sabão Líq. Erva Doce 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "erva", image: "./imagens/sabao_erva_doce_5l.jpg", type: "galao" },
+
+            // USO GERAL (GELEIAS E PASTA) - PREÇOS ATUALIZADOS
+            { id: 410, name: "Geleia Pinho 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "pinho", image: "./imagens/geleia_pinho_1l.jpg", type: "pote" },
+            { id: 451, name: "Geleia Pinho 5L", category: "Uso Geral", retailPrice: 25.00, wholesalePrice: 20.00, color: "pinho", image: "./Gemini_Generated_Image_178zan178zan178z.jpg", type: "galao" },
+            { id: 411, name: "Geleia Lavanda 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "lavanda", image: "./imagens/geleia_lavanda_1l.jpg", type: "pote" },
+            { id: 900, name: "Pasta Limpa Tudo 500g", category: "Uso Geral", retailPrice: 10.00, wholesalePrice: 8.00, color: "neutro", image: "./imagens/pasta_limpa_tudo.jpg", type: "pote" },
+
+            // LAVA LOUÇAS (DETERGENTES) 2L - PREÇO R$ 6,00
+            { id: 321, name: "Lava Louças Limão 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "capim", image: "./imagens/lava_louca_limao_2l.jpg", type: "bottle" },
+            { id: 322, name: "Lava Louças Neutro 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "neutro", image: "./imagens/lava_louca_neutro_2l.jpg", type: "bottle" },
+            { id: 320, name: "Lava Louças Maçã 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "maca", image: "./imagens/lava_louca_maca_2l.jpg", type: "bottle" },
+            { id: 323, name: "Lava Louças Coco 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "coco", image: "./imagens/lava_louca_coco_2l.jpg", type: "bottle" },
+            { id: 351, name: "Lava Louças Limão 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/lava_louca_limao_5l.jpg", type: "galao" },
+            
+            // AMACIANTE 2L - PREÇO R$ 6,00
+            { id: 500, name: "Amaciante 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "kayak", image: "./imagens/amaciante_2l.jpg", type: "bottle" },
+            { id: 501, name: "Amaciante 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "kayak", image: "./imagens/amaciante_5l.jpg", type: "galao" },
+
+            // AUTOMOTIVO - PREÇO R$ 6,00 (500ML)
+            { id: 600, name: "Limpa Pneus 500ml", category: "Automotivo", retailPrice: 6.00, wholesalePrice: 5.00, color: "preto", image: "./imagens/limpa_pneus_500ml.jpg", type: "frasco" },
+            { id: 601, name: "Limpa Pneus 1L", category: "Automotivo", retailPrice: 20.00, wholesalePrice: 15.00, color: "preto", image: "./imagens/limpa_pneus_1l.jpg", type: "bottle" },
+        ];
+
+        const CATEGORIES = ["Todos", "Limpadores", "Lavanderia", "Cozinha", "Uso Geral", "Automotivo"];
+
+        // --- Componente de Imagem Híbrido ---
+        const ProductImage = ({ product }) => {
+            const [hasError, setHasError] = useState(false);
+            const colors = PRODUCT_COLORS[product.color] || PRODUCT_COLORS.neutro;
+
+            // Seleciona a ilustração baseada no tipo
+            const renderIllustration = () => {
+                switch(product.type) {
+                    case 'galao': return <SVGGalao5L color={colors} />;
+                    case 'pote': return <SVGPote color={colors} />;
+                    case 'frasco': return <SVGFrasco color={colors} />;
+                    default: return <SVGBottle2L color={colors} />;
+                }
+            };
+
+            return (
+                <div className="relative w-full h-48 bg-gray-50/50 overflow-hidden rounded-t-2xl group-hover:bg-white transition-colors duration-300">
+                    <div className="w-full h-full p-6 flex items-center justify-center transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1">
+                        {!hasError ? (
+                            <img 
+                                src={product.image} 
+                                alt={product.name} 
+                                className="w-full h-full object-contain drop-shadow-md"
+                                onError={() => setHasError(true)}
+                            />
+                        ) : (
+                            <div className="w-full h-full animate-float">
+                                {renderIllustration()}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [isWholesale, setIsWholesale] = useState(false);
+            const [cart, setCart] = useState([]);
+            const [isCartOpen, setIsCartOpen] = useState(false);
+            const [searchQuery, setSearchQuery] = useState("");
+            const [selectedCategory, setSelectedCategory] = useState("Todos");
+            const [notification, setNotification] = useState(null);
+            const [showMobileSearch, setShowMobileSearch] = useState(false);
+            const [showScrollTop, setShowScrollTop] = useState(false); // Novo estado
+            
+            // Novos estados para o checkout completo
+            const [customerName, setCustomerName] = useState("");
+            const [customerPhone, setCustomerPhone] = useState("");
+            const [address, setAddress] = useState("");
+            const [neighborhood, setNeighborhood] = useState("");
+            const [notes, setNotes] = useState("");
+            const [paymentMethod, setPaymentMethod] = useState("pix");
+
+            // Monitorar scroll para botão voltar ao topo
+            useEffect(() => {
+                const checkScroll = () => {
+                    if (window.scrollY > 300) setShowScrollTop(true);
+                    else setShowScrollTop(false);
+                };
+                window.addEventListener('scroll', checkScroll);
+                return () => window.removeEventListener('scroll', checkScroll);
+            }, []);
+
+            // Calcula total
+            const cartTotal = useMemo(() => {
+                return cart.reduce((total, item) => {
+                    const price = isWholesale ? item.wholesalePrice : item.retailPrice;
+                    return total + (price * item.quantity);
+                }, 0);
+            }, [cart, isWholesale]);
+
+            const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+            // Formatação
+            const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+            // Ações Carrinho
+            const addToCart = (product) => {
+                setCart(prev => {
+                    const exists = prev.find(i => i.id === product.id);
+                    if (exists) return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+                    return [...prev, { ...product, quantity: 1 }];
+                });
+                showNotification(`+1 ${product.name}`);
+            };
+
+            const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
+            
+            const updateQuantity = (id, delta) => {
+                setCart(prev => prev.map(item => {
+                    if (item.id === id) return { ...item, quantity: Math.max(1, item.quantity + delta) };
+                    return item;
+                }));
+            };
+
+            const showNotification = (msg) => {
+                setNotification(msg);
+                setTimeout(() => setNotification(null), 2500);
+            };
+
+            // Função para finalizar pedido no WhatsApp
+            const handleCheckout = () => {
+                if (!customerName.trim()) {
+                    showNotification("Por favor, digite seu nome!");
+                    return;
+                }
+                if (!address.trim() || !neighborhood.trim()) {
+                    showNotification("Endereço e Bairro são obrigatórios!");
+                    return;
+                }
+
+                let message = `*NOVO PEDIDO - CANTINHO DA LIMPEZA*\n`;
+                message += `--------------------------------\n`;
+                message += `📅 *Data:* ${new Date().toLocaleDateString()}\n`;
+                message += `👤 *Cliente:* ${customerName}\n`;
+                if(customerPhone) message += `📱 *Tel:* ${customerPhone}\n`;
+                message += `📍 *Endereço:* ${address}\n`;
+                message += `🏙️ *Bairro:* ${neighborhood}\n`;
+                message += `💰 *Pagamento:* ${paymentMethod.toUpperCase()}\n`;
+                message += `📦 *Modo:* ${isWholesale ? 'ATACADO' : 'VAREJO'}\n`;
+                if(notes) message += `📝 *Obs:* ${notes}\n`;
+                message += `--------------------------------\n\n`;
+                message += `*ITENS DO PEDIDO:*\n`;
+                
+                cart.forEach(item => {
+                    const price = isWholesale ? item.wholesalePrice : item.retailPrice;
+                    const totalItem = price * item.quantity;
+                    message += `✅ ${item.quantity}x ${item.name}\n   (UN: ${formatCurrency(price)}) = *${formatCurrency(totalItem)}*\n`;
+                });
+
+                message += `\n--------------------------------\n`;
+                message += `💲 *TOTAL FINAL: ${formatCurrency(cartTotal)}*\n`;
+                message += `(Frete a combinar)`;
+
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+            };
+
+            // Filtros
+            const filteredProducts = PRODUCTS.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchCat = selectedCategory === "Todos" || p.category === selectedCategory;
+                return matchSearch && matchCat;
+            });
+
+            return (
+                <div className={`min-h-screen font-sans ${isWholesale ? 'bg-blue-50/50' : 'bg-orange-50/50'}`}>
+                    
+                    {/* --- Notificação --- */}
+                    {notification && (
+                        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-[60] flex items-center gap-2 animate-slide-up font-medium text-sm whitespace-nowrap">
+                            <i className="ph-fill ph-check-circle text-green-400 text-lg"></i>
+                            {notification}
+                        </div>
+                    )}
+
+                    {/* --- Navbar Desktop & Mobile Header --- */}
+                    <nav className={`sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b transition-colors duration-300 ${isWholesale ? 'border-blue-200' : 'border-orange-200'}`}>
+                        <div className="max-w-7xl mx-auto px-4 lg:px-8 h-20 flex items-center justify-between">
+                            
+                            {/* Logo */}
+                            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => { setSelectedCategory("Todos"); window.scrollTo(0,0); }}>
+                                <div className={`relative p-1 rounded-xl border-2 transition-all duration-300 ${isWholesale ? 'border-blue-100 bg-blue-50' : 'border-orange-100 bg-orange-50'}`}>
+                                    <img src={LOGO_URL} alt="Logo" className="h-10 md:h-12 object-contain rounded-lg" onError={(e) => e.target.style.display='none'} />
+                                    <i className="ph-fill ph-sparkle text-2xl text-orange-400 absolute -top-2 -right-2 hidden md:block" style={{ display: 'none' }}></i>
+                                </div>
+                                <div>
+                                    <h1 className="text-xl md:text-2xl font-black tracking-tighter leading-none text-gray-800">
+                                        Cantinho<span className={isWholesale ? 'text-blue-600' : 'text-orange-500'}>.</span>
+                                    </h1>
+                                    <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-gray-400">da Limpeza</p>
+                                </div>
+                            </div>
+
+                            {/* Desktop Search */}
+                            <div className="hidden md:flex flex-1 max-w-md mx-8 relative">
+                                <input 
+                                    type="text" 
+                                    placeholder="Buscar produtos..." 
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-gray-100 border-transparent focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none text-sm font-medium"
+                                />
+                                <i className="ph ph-magnifying-glass absolute left-4 top-3 text-gray-400 text-lg"></i>
+                            </div>
+
+                            {/* Actions Desktop */}
+                            <div className="flex items-center gap-4">
+                                {/* Toggle Atacado/Varejo */}
+                                <div 
+                                    onClick={() => setIsWholesale(!isWholesale)}
+                                    className={`cursor-pointer flex items-center gap-2 px-1 py-1 rounded-full border shadow-inner w-36 relative transition-colors ${isWholesale ? 'bg-blue-100 border-blue-300' : 'bg-orange-100 border-orange-300'}`}
+                                >
+                                    <div className={`absolute w-[45%] h-[80%] bg-white rounded-full shadow-sm transition-all duration-300 ${isWholesale ? 'left-[52%]' : 'left-[3%]'}`}></div>
+                                    <span className={`z-10 flex-1 text-center text-[10px] font-bold uppercase ${!isWholesale ? 'text-orange-600' : 'text-gray-400'}`}>Varejo</span>
+                                    <span className={`z-10 flex-1 text-center text-[10px] font-bold uppercase ${isWholesale ? 'text-blue-600' : 'text-gray-400'}`}>Atacado</span>
+                                </div>
+
+                                {/* Cart Button Desktop */}
+                                <button 
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="hidden md:flex relative p-2.5 rounded-full hover:bg-gray-100 transition-colors"
+                                >
+                                    <i className={`ph-fill ph-shopping-cart text-2xl ${isWholesale ? 'text-blue-600' : 'text-orange-500'}`}></i>
+                                    {cartCount > 0 && (
+                                        <span className="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full shadow-sm border-2 border-white animate-pulse-soft">
+                                            {cartCount}
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        {/* Mobile Search Bar (Expandable) */}
+                        {showMobileSearch && (
+                            <div className="md:hidden px-4 pb-4 animate-fade-in bg-white border-b border-gray-100">
+                                <div className="relative">
+                                    <input 
+                                        autoFocus
+                                        type="text" 
+                                        placeholder="O que você procura?" 
+                                        value={searchQuery}
+                                        onChange={e => setSearchQuery(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-100 text-base outline-none"
+                                    />
+                                    <i className="ph ph-magnifying-glass absolute left-3.5 top-3.5 text-gray-500 text-xl"></i>
+                                </div>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* --- Bottom Navigation (Mobile Only) --- */}
+                    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-safe z-40 flex justify-around items-center h-16 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                        <button onClick={() => {setShowMobileSearch(false); window.scrollTo({top: 0, behavior: 'smooth'});}} className="flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-orange-500 active:text-orange-600">
+                            <i className="ph ph-house text-2xl mb-0.5"></i>
+                            <span className="text-[10px] font-medium">Início</span>
+                        </button>
+                        <button onClick={() => setShowMobileSearch(!showMobileSearch)} className={`flex flex-col items-center justify-center w-full h-full ${showMobileSearch ? 'text-orange-500' : 'text-gray-400'}`}>
+                            <i className="ph ph-magnifying-glass text-2xl mb-0.5"></i>
+                            <span className="text-[10px] font-medium">Buscar</span>
+                        </button>
+                        <button onClick={() => setIsCartOpen(true)} className="flex flex-col items-center justify-center w-full h-full text-gray-400 relative">
+                            <div className="relative">
+                                <i className="ph ph-shopping-cart text-2xl mb-0.5"></i>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </div>
+                            <span className="text-[10px] font-medium">Carrinho</span>
+                        </button>
+                    </div>
+
+                    {/* --- Botão Voltar ao Topo --- */}
+                    {showScrollTop && (
+                        <button 
+                            onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+                            className="fixed bottom-24 md:bottom-28 right-4 md:right-8 bg-gray-800 text-white p-3 rounded-full shadow-lg z-30 animate-fade-in hover:bg-gray-700 transition-colors"
+                        >
+                            <i className="ph-bold ph-arrow-up text-xl"></i>
+                        </button>
+                    )}
+
+                    {/* --- WhatsApp Floating Button --- */}
+                    <a 
+                        href={`https://wa.me/${WHATSAPP_NUMBER}`} 
+                        target="_blank"
+                        className="fixed bottom-20 md:bottom-8 right-4 md:right-8 bg-green-500 hover:bg-green-600 text-white p-3 md:p-4 rounded-full shadow-lg hover:shadow-green-500/30 transition-all z-40 animate-bounce-in flex items-center justify-center group"
+                    >
+                        <i className="ph-fill ph-whatsapp-logo text-3xl md:text-4xl"></i>
+                        <span className="absolute right-full mr-3 bg-white text-gray-800 px-3 py-1.5 rounded-lg text-sm font-bold shadow-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block">
+                            Fale Conosco
+                        </span>
+                    </a>
+
+                    {/* --- Banner Hero --- */}
+                    <div className="relative overflow-hidden bg-gray-900">
+                        <div className={`absolute inset-0 opacity-80 bg-gradient-to-r ${isWholesale ? 'from-blue-900 via-blue-800 to-indigo-900' : 'from-orange-600 via-amber-600 to-yellow-500'}`}></div>
+                        {/* Padrão de fundo decorativo */}
+                        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '30px 30px'}}></div>
+                        
+                        <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                            <div className="flex-1 text-center md:text-left text-white z-10">
+                                <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold tracking-wider uppercase mb-4 border border-white/30">
+                                    {isWholesale ? 'Preços de Fábrica' : 'Entrega Rápida'}
+                                </div>
+                                <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-lg">
+                                    {isWholesale ? 'ECONOMIA' : 'LIMPEZA'} <br/>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+                                        {isWholesale ? 'GARANTIDA' : 'PROFISSIONAL'}
+                                    </span>
+                                </h2>
+                                <p className="text-lg md:text-xl text-white/90 mb-8 max-w-lg mx-auto md:mx-0 font-medium">
+                                    {isWholesale ? 'Abasteça seu negócio com as melhores marcas.' : 'Sua casa brilhando com produtos de alta performance.'}
+                                </p>
+                                <button onClick={() => document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})} className="bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2 mx-auto md:mx-0">
+                                    Ver Ofertas <i className="ph-bold ph-arrow-right"></i>
+                                </button>
+                            </div>
+                            {/* Imagem Ilustrativa Direita (Escondida em telas muito pequenas) */}
+                            <div className="hidden md:block flex-1 relative">
+                                <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10 rounded-full blur-3xl"></div>
+                                <div className="relative bg-white/10 backdrop-blur-sm p-6 rounded-3xl border border-white/20 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700">
+                                    <div className="flex items-center gap-4 mb-4 border-b border-white/10 pb-4">
+                                        <div className="h-12 w-12 rounded-full bg-green-400 flex items-center justify-center"><i className="ph-fill ph-check text-white text-2xl"></i></div>
+                                        <div>
+                                            <div className="text-white font-bold text-lg">Qualidade Premium</div>
+                                            <div className="text-white/70 text-sm">Produtos testados e aprovados</div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {[1,2,3].map(i => (
+                                            <div key={i} className="h-2 bg-white/20 rounded-full w-full"></div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- Filtros de Categoria (Estilo Pill) --- */}
+                    <div id="catalogo" className="sticky top-20 z-30 bg-white/90 backdrop-blur border-b border-gray-100 py-4 shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 overflow-x-auto no-scrollbar">
+                            <div className="flex gap-3 md:justify-center min-w-max px-2">
+                                {CATEGORIES.map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setSelectedCategory(cat)}
+                                        className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
+                                            selectedCategory === cat
+                                                ? (isWholesale ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-orange-500 text-white shadow-lg shadow-orange-200')
+                                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        }`}
+                                    >
+                                        {cat === "Todos" && <i className="ph-bold ph-squares-four"></i>}
+                                        {cat === "Limpadores" && <i className="ph-bold ph-sparkle"></i>}
+                                        {cat === "Lavanderia" && <i className="ph-bold ph-t-shirt"></i>}
+                                        {cat === "Cozinha" && <i className="ph-bold ph-cooking-pot"></i>}
+                                        {cat === "Automotivo" && <i className="ph-bold ph-car"></i>}
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- Grid de Produtos --- */}
+                    <main className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+                        {/* ... existing products grid code ... */}
+                        {filteredProducts.length === 0 ? (
+                            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
+                                <i className="ph ph-package text-6xl text-gray-300 mb-4"></i>
+                                <p className="text-gray-500 font-medium">Nenhum produto encontrado nesta categoria.</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+                                {filteredProducts.map(product => (
+                                    <div key={product.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col group relative overflow-hidden">
+                                        
+                                        {/* Imagem (Componente Inteligente) */}
+                                        <ProductImage product={product} />
+
+                                        {/* Corpo do Card */}
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            <div className="text-[10px] uppercase font-bold text-gray-400 mb-1 tracking-wide">{product.category}</div>
+                                            <h3 className="text-sm md:text-base font-bold text-gray-800 leading-tight mb-1 line-clamp-2 min-h-[2.5em]">
+                                                {product.name}
+                                            </h3>
+                                            
+                                            {/* Preço e Botão */}
+                                            <div className="mt-auto pt-3 flex flex-col gap-2">
+                                                <div>
+                                                    <span className="text-[10px] text-gray-400 line-through mr-2">
+                                                        {formatCurrency((isWholesale ? product.wholesalePrice : product.retailPrice) * 1.2)}
+                                                    </span>
+                                                    <div className="flex items-end gap-1">
+                                                        <span className="text-xs font-medium text-gray-500 mb-1">R$</span>
+                                                        <span className={`text-xl md:text-2xl font-black ${isWholesale ? 'text-blue-600' : 'text-orange-600'}`}>
+                                                            {formatCurrency(isWholesale ? product.wholesalePrice : product.retailPrice).replace('R$', '').trim()}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <button 
+                                                    onClick={() => addToCart(product)}
+                                                    className={`w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-95 ${
+                                                        isWholesale 
+                                                        ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200' 
+                                                        : 'bg-orange-50 text-orange-700 hover:bg-orange-100 border border-orange-200'
+                                                    }`}
+                                                >
+                                                    <i className="ph-bold ph-shopping-cart-simple"></i>
+                                                    Adicionar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* --- Footer Melhorado --- */}
+                    <footer className="bg-white border-t border-gray-200 pt-12 pb-24 md:pb-12 mt-12">
+                        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="bg-orange-100 p-1.5 rounded-lg">
+                                        <i className="ph-fill ph-sparkle text-orange-500 text-xl"></i>
+                                    </div>
+                                    <span className="font-bold text-lg text-gray-800">Cantinho da Limpeza</span>
+                                </div>
+                                <p className="text-sm text-gray-500 leading-relaxed mb-4">
+                                    Sua distribuidora de confiança. Produtos de limpeza de alta performance para sua casa e empresa com os melhores preços da região.
+                                </p>
+                                <div className="flex gap-3">
+                                    <a href="#" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white transition-colors">
+                                        <i className="ph-fill ph-instagram-logo"></i>
+                                    </a>
+                                    <a href="#" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors">
+                                        <i className="ph-fill ph-facebook-logo"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 className="font-bold text-gray-800 mb-4">Atendimento</h4>
+                                <ul className="space-y-3 text-sm text-gray-500">
+                                    <li className="flex items-center gap-2">
+                                        <i className="ph-fill ph-whatsapp-logo text-green-500 text-lg"></i>
+                                        (79) 9949-2733
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <i className="ph-fill ph-clock text-gray-400 text-lg"></i>
+                                        Seg à Sab: 08h às 18h
+                                    </li>
+                                    <li className="flex items-center gap-2">
+                                        <i className="ph-fill ph-truck text-gray-400 text-lg"></i>
+                                        Entregas em toda região
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h4 className="font-bold text-gray-800 mb-4">Formas de Pagamento</h4>
+                                <div className="flex flex-wrap gap-2 text-2xl text-gray-400">
+                                    <i className="ph-fill ph-pix-logo hover:text-teal-600 transition-colors"></i>
+                                    <i className="ph-fill ph-credit-card hover:text-blue-600 transition-colors"></i>
+                                    <i className="ph-fill ph-money hover:text-green-600 transition-colors"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="max-w-7xl mx-auto px-6 pt-8 mt-8 border-t border-gray-100 text-center text-xs text-gray-400">
+                            &copy; 2024 Cantinho da Limpeza. Todos os direitos reservados.
+                        </div>
+                    </footer>
+
+                    {/* --- Sidebar Carrinho --- */}
+                    {isCartOpen && (
+                        <div className="fixed inset-0 z-[100] flex justify-end">
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={() => setIsCartOpen(false)}></div>
+                            <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-fade-in">
+                                <div className="p-5 border-b flex items-center justify-between bg-gray-50">
+                                    <h2 className="text-lg font-bold flex items-center gap-2">
+                                        <i className="ph-fill ph-shopping-bag text-gray-800"></i> Seu Pedido
+                                    </h2>
+                                    <button onClick={() => setIsCartOpen(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                                        <i className="ph-bold ph-x text-xl"></i>
+                                    </button>
+                                </div>
+
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                    {cart.length === 0 ? (
+                                        <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50">
+                                            <i className="ph ph-shopping-cart text-6xl mb-4 text-gray-300"></i>
+                                            <p className="font-medium">Carrinho vazio</p>
+                                            <button onClick={() => setIsCartOpen(false)} className="mt-4 text-orange-500 font-bold hover:underline">Começar a comprar</button>
+                                        </div>
+                                    ) : (
+                                        cart.map(item => (
+                                            <div key={item.id} className="flex gap-4 p-3 bg-white border rounded-xl shadow-sm">
+                                                <div className="w-16 h-16 bg-gray-50 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
+                                                    {/* Imagem no carrinho também usa a lógica de fallback */}
+                                                    <img 
+                                                        src={item.image} 
+                                                        onError={(e) => {
+                                                            e.target.style.display='none';
+                                                            e.target.nextSibling.style.display='flex';
+                                                        }} 
+                                                        className="w-full h-full object-contain" 
+                                                    />
+                                                    <div style={{display:'none'}} className="w-full h-full items-center justify-center bg-gray-100">
+                                                        <i className="ph-fill ph-package text-gray-400 text-2xl" />
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-bold text-sm text-gray-800 line-clamp-1">{item.name}</h4>
+                                                    <p className="text-xs text-gray-500 mb-2">{formatCurrency(isWholesale ? item.wholesalePrice : item.retailPrice)} un</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3 bg-gray-50 rounded-lg px-2 py-1 border border-gray-100">
+                                                            <button onClick={() => item.quantity > 1 ? updateQuantity(item.id, -1) : removeFromCart(item.id)} className="text-gray-500 hover:text-red-500">
+                                                                <i className="ph-bold ph-minus"></i>
+                                                            </button>
+                                                            <span className="text-sm font-bold w-4 text-center">{item.quantity}</span>
+                                                            <button onClick={() => updateQuantity(item.id, 1)} className="text-gray-500 hover:text-green-500">
+                                                                <i className="ph-bold ph-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <span className="font-bold text-sm">{formatCurrency((isWholesale ? item.wholesalePrice : item.retailPrice) * item.quantity)}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+
+                                {cart.length > 0 && (
+                                    <div className="p-6 bg-white border-t safe-bottom space-y-4 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                                        
+                                        <div className="bg-yellow-50 text-yellow-800 px-4 py-2 rounded-lg text-xs flex items-center gap-2">
+                                            <i className="ph-fill ph-info"></i>
+                                            Frete a combinar após o envio do pedido.
+                                        </div>
+
+                                        {/* Área de Dados do Cliente - ATUALIZADA */}
+                                        <div className="space-y-3">
+                                            <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Dados para Entrega</h4>
+                                            
+                                            <input 
+                                                type="text" 
+                                                value={customerName}
+                                                onChange={(e) => setCustomerName(e.target.value)}
+                                                placeholder="Seu Nome Completo *"
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
+                                            />
+                                            
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <input 
+                                                    type="text" 
+                                                    value={address}
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    placeholder="Endereço (Rua, Nº) *"
+                                                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
+                                                />
+                                                <input 
+                                                    type="text" 
+                                                    value={neighborhood}
+                                                    onChange={(e) => setNeighborhood(e.target.value)}
+                                                    placeholder="Bairro *"
+                                                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
+                                                />
+                                            </div>
+
+                                            <input 
+                                                type="text" 
+                                                value={notes}
+                                                onChange={(e) => setNotes(e.target.value)}
+                                                placeholder="Obs: Troco, Ponto de ref..."
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
+                                            />
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Pagamento</label>
+                                                <select 
+                                                    value={paymentMethod}
+                                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                                    className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-white"
+                                                >
+                                                    <option value="pix">PIX</option>
+                                                    <option value="dinheiro">Dinheiro</option>
+                                                    <option value="cartao_credito">Cartão de Crédito</option>
+                                                    <option value="cartao_debito">Cartão de Débito</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-between items-center pt-2 border-t border-gray-100 mt-2">
+                                            <span className="text-gray-500 font-medium">Total (Sem frete)</span>
+                                            <span className="text-2xl font-black text-gray-900">{formatCurrency(cartTotal)}</span>
+                                        </div>
+                                        
+                                        <button 
+                                            onClick={handleCheckout}
+                                            className={`w-full py-4 rounded-xl font-bold text-white shadow-lg text-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${isWholesale ? 'bg-blue-600 shadow-blue-200 hover:bg-blue-700' : 'bg-green-600 shadow-green-200 hover:bg-green-700'}`}
+                                        >
+                                            <i className="ph-bold ph-whatsapp-logo text-2xl"></i>
+                                            Enviar Pedido no Zap
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
