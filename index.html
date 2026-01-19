@@ -43,6 +43,8 @@
         const { useState, useEffect, useMemo } = React;
 
         // --- Configurações ---
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxr8VCvPkvcFjVze1tdHJbp4_dG7zPPTeamBxnG7Q9Q0f5Kv6_VpnUjKjl8iRu1Hwup/exec"; 
+        
         const LOGO_URL = "./WhatsApp Image 2026-01-18 at 21.38.34.jpeg";
         const WHATSAPP_NUMBER = "557999492733"; 
 
@@ -73,7 +75,8 @@
         };
 
         // --- Ilustrações SVG (Componentes) ---
-        const SVGBottle2L = ({ color }) => (
+        // Componente agora aceita "label" para mostrar 500ml ou 2L
+        const SVGBottle = ({ color, label = "2L" }) => (
             <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-md">
                 <defs>
                     <linearGradient id={`grad-${color.primary}`} x1="0%" y1="0%" x2="100%" y2="100%">
@@ -86,7 +89,7 @@
                 <rect x="30" y="55" width="40" height="40" rx="2" fill="white" opacity="0.9" />
                 <rect x="35" y="65" width="30" height="4" rx="1" fill={color.primary} />
                 <rect x="35" y="75" width="20" height="2" rx="1" fill="#cbd5e1" />
-                <text x="50" y="88" fontSize="8" textAnchor="middle" fill="#64748b" fontWeight="bold">2L</text>
+                <text x="50" y="88" fontSize="10" textAnchor="middle" fill="#64748b" fontWeight="bold">{label}</text>
             </svg>
         );
 
@@ -136,70 +139,142 @@
             </svg>
         );
 
-         // --- Dados dos Produtos (Com metadados de imagem e preços atualizados) ---
-         const PRODUCTS = [
-             // LIMPADORES 2L (R$ 5,00 Varejo)
-            { id: 2006, name: "Limpador Eucalipto 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_2l.jpg", type: "bottle" },
-            { id: 2009, name: "Limpador Palmolive 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "palmolive", image: "./imagens/limpador_palmolive_2l.jpg", type: "bottle" },
-            { id: 2013, name: "Limpador Jasmim 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "jasmim", image: "./imagens/limpador_jasmim_2l.jpg", type: "bottle" },
-            { id: 2008, name: "Limpador Lavanda Herbal 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "lavanda", image: "./imagens/limpador_lavanda_herbal_2l.jpg", type: "bottle" },
-            { id: 2012, name: "Limpador Brisa 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "brisa", image: "./imagens/limpador_brisa_2l.jpg", type: "bottle" },
-            { id: 2011, name: "Limpador Alfazema 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "alfazema", image: "./imagens/limpador_alfazema_2l.jpg", type: "bottle" },
-            { id: 2002, name: "Limpador Dama da Noite 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "dama", image: "./imagens/limpador_dama_da_noite_2l.jpg", type: "bottle" },
-            { id: 2004, name: "Limpador Talco 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "talco", image: "./imagens/limpador_talco_2l.jpg", type: "bottle" },
-            { id: 2014, name: "Limpador Girassol 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "girassol", image: "./imagens/limpador_girassol_2l.jpg", type: "bottle" },
-            { id: 2001, name: "Limpador Floral Frutal 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "floral", image: "./imagens/limpador_floral_frutal_2l.jpg", type: "bottle" },
-            { id: 2003, name: "Limpador Kayak 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "kayak", image: "./imagens/limpador_kayak_2l.jpg", type: "bottle" },
-            { id: 2010, name: "Limpador Natura 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "natura", image: "./imagens/limpador_natura_2l.jpg", type: "bottle" },
-            { id: 2007, name: "Limpador Lavanda Glade 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "glade", image: "./imagens/limpador_lavanda_glade_2l.jpg", type: "bottle" },
-            { id: 2005, name: "Limpador Capim Limão 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "capim", image: "./imagens/limpador_capim_limao_2l.jpg", type: "bottle" },
+        const SVGVassoura = ({ color }) => (
+            <svg viewBox="0 0 100 120" className="w-full h-full drop-shadow-md">
+                <rect x="45" y="0" width="10" height="80" rx="2" fill="#d4a373" />
+                <path d="M20,80 Q20,80 80,80 L90,115 Q90,120 80,120 L20,120 Q10,120 10,115 Z" fill={color.primary} />
+                <rect x="20" y="80" width="60" height="5" fill={color.secondary} />
+                <line x1="30" y1="85" x2="25" y2="115" stroke="white" strokeWidth="1" opacity="0.5" />
+                <line x1="40" y1="85" x2="38" y2="115" stroke="white" strokeWidth="1" opacity="0.5" />
+                <line x1="50" y1="85" x2="50" y2="115" stroke="white" strokeWidth="1" opacity="0.5" />
+                <line x1="60" y1="85" x2="62" y2="115" stroke="white" strokeWidth="1" opacity="0.5" />
+                <line x1="70" y1="85" x2="75" y2="115" stroke="white" strokeWidth="1" opacity="0.5" />
+            </svg>
+        );
 
-            // LIMPADORES 5L (R$ 12,00 Varejo)
-            { id: 2056, name: "Limpador Eucalipto 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_5l.jpg", type: "galao" },
-            { id: 2059, name: "Limpador Jasmim 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "jasmim", image: "./imagens/limpador_jasmim_5l.jpg", type: "galao" },
+         // --- Dados dos Produtos (Com metadados de imagem) ---
+         const PRODUCTS = [
+             // LIMPADORES 500ML (DESINFETANTES) - PREÇO R$ 6,00 - RENDE 5L
+             // ALTERAÇÃO: Imagem atualizada para a foto específica de 500ml (Eucalipto)
+            { id: 2006, name: "Limpador Eucalipto 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "eucalipto", image: "./LIMPADOR EUCALIPTO 500ML.jpeg", type: "bottle" },
+            { id: 2009, name: "Limpador Palmolive 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "palmolive", image: "./LIMPADOR PALMOLIVE.jpeg", type: "bottle" },
+            { id: 2013, name: "Limpador Jasmim 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "jasmim", image: "./LIMAPADOR JASMIM.jpeg", type: "bottle" },
+            { id: 2008, name: "Limpador Lavanda Herbal 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "lavanda", image: "./LIMAPDOR LAVANDA HERBAL.jpeg", type: "bottle" },
+            { id: 2012, name: "Limpador Brisa 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "brisa", image: "./LIMAPADOR BRISA.jpeg", type: "bottle" },
+            { id: 2011, name: "Limpador Alfazema 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "alfazema", image: "./LIMPADOR ALFAZEMA.jpeg", type: "bottle" },
+            { id: 2002, name: "Limpador Dama da Noite 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "dama", image: "./LIMPADOR DAMA DA NOITE.jpeg", type: "bottle" },
+            { id: 2004, name: "Limpador Talco 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "talco", image: "./LIMAPDOR TALCO.jpeg", type: "bottle" },
+            { id: 2014, name: "Limpador Girassol 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "girassol", image: "./LIMPADOR GIRASSOL.jpeg", type: "bottle" },
+            { id: 2001, name: "Limpador Floral Frutal 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "floral", image: "./LIMPADOR FLORA FRUTAL.jpeg", type: "bottle" },
+            { id: 2003, name: "Limpador Kayak 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "kayak", image: "./LIMPADOR KAYAK.jpeg", type: "bottle" },
+            { id: 2010, name: "Limpador Natura 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "natura", image: "./LIMPADOR NATURA.jpeg", type: "bottle" },
+            { id: 2007, name: "Limpador Lavanda Glade 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "glade", image: "./imagens/limpador_lavanda_glade_2l.jpg", type: "bottle" },
+            { id: 2005, name: "Limpador Capim Limão 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, yields: "5L", color: "capim", image: "./LIMPADOR CAPIM LIMAO.jpeg", type: "bottle" },
+
+            // NOVO: LIMPADORES 2L (MESMAS FRAGRÂNCIAS) - PREÇO R$ 7,00 (VAREJO) / R$ 6,00 (ATACADO)
+            // ALTERAÇÃO: Imagem atualizada para a foto específica de Eucalipto 2L
+            { id: 7006, name: "Limpador Eucalipto 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "eucalipto", image: "./LIMPADOR EUCALIPTO 2L.jpeg", type: "bottle2l" },
+            { id: 7009, name: "Limpador Palmolive 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "palmolive", image: "./LIMPADOR PALMOLIVE 2L.jpeg", type: "bottle2l" },
+            { id: 7013, name: "Limpador Jasmim 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "jasmim", image: "./LIMPADOR JASMIN 2L.jpeg", type: "bottle2l" },
+            
+            // SEM FOTO (AGUARDANDO NOVA)
+            { id: 7008, name: "Limpador Lavanda Herbal 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "lavanda", image: "", type: "bottle2l" },
+            
+            { id: 7012, name: "Limpador Brisa 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "brisa", image: "./LIMPADOR BRISA 2L.jpeg", type: "bottle2l" },
+            
+            // SEM FOTO (AGUARDANDO NOVA)
+            { id: 7011, name: "Limpador Alfazema 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "alfazema", image: "", type: "bottle2l" },
+            // SEM FOTO (AGUARDANDO NOVA)
+            { id: 7002, name: "Limpador Dama da Noite 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "dama", image: "", type: "bottle2l" },
+            
+            { id: 7004, name: "Limpador Talco 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "talco", image: "./LIMPADOR TALCO 2L.jpeg", type: "bottle2l" },
+            
+            // RESTAURADO: Imagem correta do Girassol
+            { id: 7014, name: "Limpador Girassol 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "girassol", image: "./LIMPADOR GIRASSOL 2L.jpeg", type: "bottle2l" },
+            
+            // SEM FOTO (AGUARDANDO NOVA)
+            { id: 7001, name: "Limpador Floral Frutal 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "floral", image: "", type: "bottle2l" },
+            
+            // RESTAURADO: Imagem correta do Kayak
+            { id: 7003, name: "Limpador Kayak 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "kayak", image: "./LIMPADOR KAYAK 2L.jpeg", type: "bottle2l" },
+            // RESTAURADO: Imagem correta do Natura
+            { id: 7010, name: "Limpador Natura 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "natura", image: "./LIMPADOR NATURA 2L.jpeg", type: "bottle2l" },
+            
+            { id: 7007, name: "Limpador Lavanda Glade 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "glade", image: "./imagens/limpador_lavanda_glade_2l.jpg", type: "bottle2l" },
+            
+            // RESTAURADO: Imagem correta do Capim Limão
+            { id: 7005, name: "Limpador Capim Limão 2L", category: "Limpadores", retailPrice: 7.00, wholesalePrice: 6.00, color: "capim", image: "./LIMPADOR CAPIM LIMAO 2L.jpeg", type: "bottle2l" },
+
+            // LIMPADORES 5L
+            // ALTERAÇÃO: Imagem atualizada para a foto específica de 5L (Eucalipto)
+            { id: 2056, name: "Limpador Eucalipto 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "eucalipto", image: "./LIMPADOR DE EUCALIPTO 5L.jpeg", type: "galao" },
+            // ALTERAÇÃO: Imagem atualizada para a foto específica de 5L (Jasmim)
+            { id: 2059, name: "Limpador Jasmim 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "jasmim", image: "./LIMPADOR JASMIN 5L.jpeg", type: "galao" },
             { id: 2058, name: "Limpador Lavanda Herbal 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "lavanda", image: "./imagens/limpador_lavanda_herbal_5l.jpg", type: "galao" },
             { id: 2052, name: "Limpador Dama da Noite 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "dama", image: "./imagens/limpador_dama_da_noite_5l.jpg", type: "galao" },
             { id: 2054, name: "Limpador Talco 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "talco", image: "./imagens/limpador_talco_5l.jpg", type: "galao" },
-            { id: 2053, name: "Limpador Kayak 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "kayak", image: "./imagens/limpador_kayak_5l.jpg", type: "galao" },
+            // ALTERAÇÃO: Imagem atualizada para a foto específica de Kayak 5L
+            { id: 2053, name: "Limpador Kayak 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "kayak", image: "./LIMPADOR KAYAK 5L.jpeg", type: "galao" },
             { id: 2055, name: "Limpador Capim Limão 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/limpador_capim_limao_5l.jpg", type: "galao" },
 
-            // CONCENTRADOS (R$ 6,00)
+            // CONCENTRADOS (BASE DESINFETANTE) - PREÇO R$ 6,00
             { id: 209, name: "Concentrado Jasmim 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "jasmim", image: "./imagens/concentrado_jasmim_500ml.jpg", type: "frasco" },
             { id: 208, name: "Concentrado Lavanda 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "lavanda", image: "./imagens/concentrado_lavanda_500ml.jpg", type: "frasco" },
             { id: 202, name: "Concentrado Dama Noite 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "dama", image: "./imagens/concentrado_dama_noite_500ml.jpg", type: "frasco" },
             { id: 206, name: "Concentrado Eucalipto 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "eucalipto", image: "./imagens/concentrado_eucalipto_500ml.jpg", type: "frasco" },
 
-            // SABÃO LÍQUIDO 2L (R$ 6,00)
+            // SABÃO LÍQUIDO 2L - PREÇO R$ 6,00
             { id: 420, name: "Sabão Líq. Jamaica 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "jamaica", image: "./imagens/sabao_jamaica_2l.jpg", type: "bottle" },
-            { id: 450, name: "Sabão Líq. Jamaica 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "jamaica", image: "./imagens/sabao_jamaica_5l.jpg", type: "galao" },
-            { id: 421, name: "Sabão Líq. Dove 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "dove", image: "./imagens/sabao_dove_2l.jpg", type: "bottle" },
-            { id: 452, name: "Sabão Líq. Dove 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "dove", image: "./imagens/sabao_dove_5l.jpg", type: "galao" },
-            { id: 422, name: "Sabão Líq. Erva Doce 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "erva", image: "./imagens/sabao_erva_doce_2l.jpg", type: "bottle" },
-            { id: 453, name: "Sabão Líq. Erva Doce 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "erva", image: "./imagens/sabao_erva_doce_5l.jpg", type: "galao" },
-
-            // USO GERAL (Geleia 1L 11,00 / 5L 25,00 / Pasta 10,00)
-            { id: 410, name: "Geleia Pinho 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "pinho", image: "./imagens/geleia_pinho_1l.jpg", type: "pote" },
-            { id: 451, name: "Geleia Pinho 5L", category: "Uso Geral", retailPrice: 25.00, wholesalePrice: 20.00, color: "pinho", image: "./Gemini_Generated_Image_178zan178zan178z.jpg", type: "galao" },
-            { id: 411, name: "Geleia Lavanda 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "lavanda", image: "./imagens/geleia_lavanda_1l.jpg", type: "pote" },
-            { id: 900, name: "Pasta Limpa Tudo 500g", category: "Uso Geral", retailPrice: 10.00, wholesalePrice: 8.00, color: "neutro", image: "./imagens/pasta_limpa_tudo.jpg", type: "pote" },
-
-            // LAVA LOUÇAS 2L (R$ 6,00) e 5L (R$ 12,00)
-            { id: 321, name: "Lava Louças Limão 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "capim", image: "./imagens/lava_louca_limao_2l.jpg", type: "bottle" },
-            { id: 322, name: "Lava Louças Neutro 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "neutro", image: "./imagens/lava_louca_neutro_2l.jpg", type: "bottle" },
-            { id: 320, name: "Lava Louças Maçã 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "maca", image: "./imagens/lava_louca_maca_2l.jpg", type: "bottle" },
-            { id: 323, name: "Lava Louças Coco 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "coco", image: "./imagens/lava_louca_coco_2l.jpg", type: "bottle" },
-            { id: 351, name: "Lava Louças Limão 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/lava_louca_limao_5l.jpg", type: "galao" },
+            { id: 450, name: "Sabão Líq. Jamaica 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "jamaica", image: "./sabao liquido jamaica 5L.jpeg", type: "galao" },
             
-            // AMACIANTE 2L (R$ 6,00) e 5L (R$ 13,00)
-            { id: 500, name: "Amaciante 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "kayak", image: "./imagens/amaciante_2l.jpg", type: "bottle" },
-            { id: 501, name: "Amaciante 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "kayak", image: "./imagens/amaciante_5l.jpg", type: "galao" },
+            // USO GERAL (GELEIAS E PASTA) - PREÇOS ATUALIZADOS
+            { id: 410, name: "Geleia Pinho 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "pinho", image: "./imagens/geleia_pinho_1l.jpg", type: "pote" },
+            // ALTERAÇÃO: Preço atualizado para R$ 26,00 (Varejo) e R$ 22,00 (Atacado)
+            { id: 451, name: "Geleia Pinho 5L", category: "Uso Geral", retailPrice: 26.00, wholesalePrice: 22.00, color: "pinho", image: "./SABAO GELEIA PINHO 5L.jpeg", type: "galao" },
+            { id: 411, name: "Geleia Lavanda 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "lavanda", image: "./imagens/geleia_lavanda_1l.jpg", type: "pote" },
+            // ALTERAÇÃO: Preço atualizado para R$ 26,00 (Varejo) e R$ 22,00 (Atacado)
+            { id: 452, name: "Geleia Lavanda 5L", category: "Uso Geral", retailPrice: 26.00, wholesalePrice: 22.00, color: "lavanda", image: "./SABAO GELEIA LAVANDA 5L.jpeg", type: "galao" },
+            { id: 900, name: "Pasta Limpa Tudo 500g", category: "Uso Geral", retailPrice: 10.00, wholesalePrice: 8.00, color: "neutro", image: "./PASTA LIMPA TUDO 500G.jpeg", type: "pote" },
 
-            // AUTOMOTIVO (500ml R$ 6,00)
-            { id: 600, name: "Limpa Pneus 500ml", category: "Automotivo", retailPrice: 6.00, wholesalePrice: 5.00, color: "preto", image: "./imagens/limpa_pneus_500ml.jpg", type: "frasco" },
-            { id: 601, name: "Limpa Pneus 1L", category: "Automotivo", retailPrice: 20.00, wholesalePrice: 15.00, color: "preto", image: "./imagens/limpa_pneus_1l.jpg", type: "bottle" },
+            // LAVA LOUÇAS (DETERGENTES) 1L - PREÇO R$ 6,00
+            // RESTAURADO: Lava Louças Limão 1L (Original)
+            { id: 321, name: "Lava Louças Limão 1L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "capim", image: "./lava louças limao 1L .jpeg", type: "bottle" },
+            { id: 322, name: "Lava Louças Neutro 1L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "neutro", image: "./lava louças neutro de 1L.jpeg", type: "bottle" },
+            
+            // ALTERAÇÃO: Imagem atualizada para a foto da Base de Maçã (no produto Maçã original)
+            { id: 320, name: "Lava Louças Maçã 1L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "maca", image: "./BASE DE DETERGENTE MAÇA 1L.jpeg", type: "bottle" },
+            
+            // ALTERAÇÃO: Imagem atualizada para a foto da Base de Coco (no produto Coco original)
+            { id: 323, name: "Lava Louças Coco 1L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "coco", image: "./BASE DETERGENTE DE COCO 1L.jpeg", type: "bottle" },
+
+            // NOVO: BASES DE DETERGENTE 1L (Apenas Limão separado, pois você pediu para manter o Limão original)
+            { id: 324, name: "Base de Detergente 1L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "capim", image: "./BASE DE DETERGENTE 1L.jpeg", type: "bottle" },
+            
+            // LAVA LOUÇAS 5L
+            { id: 351, name: "Lava Louças Limão 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./lava louças de limao.jpeg", type: "galao" },
+            { id: 352, name: "Lava Louças Neutro 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "neutro", image: "./sabao liquido neutro 5L.jpeg", type: "galao" },
+            { id: 353, name: "Lava Louças Maçã 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "maca", image: "./lava louças de maça.jpeg", type: "galao" },
+            { id: 354, name: "Lava Louças Coco 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "coco", image: "./lava louças de coco.jpeg", type: "galao" },
+            
+            // AMACIANTE 2L - PREÇO R$ 6,00
+            // ALTERAÇÃO: Imagem atualizada para a foto específica de Amaciante 2L
+            { id: 500, name: "Amaciante 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "kayak", image: "./AMACIANTE 2L.jpeg", type: "bottle" },
+            { id: 501, name: "Amaciante 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "kayak", image: "./amaciente liquido 5 L.jpeg", type: "galao" },
+
+            // AUTOMOTIVO - PREÇO R$ 6,00 (500ML)
+            // ALTERAÇÃO: Imagem atualizada para a foto específica do Limpa Pneus 500ml
+            { id: 600, name: "Limpa Pneus 500ml", category: "Automotivo", retailPrice: 6.00, wholesalePrice: 5.00, color: "preto", image: "./LIMPA PNEUS 500ML.jpeg", type: "frasco" },
+            // ALTERAÇÃO: Usando a mesma imagem do de 500ml para o de 1L conforme solicitado
+            { id: 601, name: "Limpa Pneus 1L", category: "Automotivo", retailPrice: 20.00, wholesalePrice: 15.00, color: "preto", image: "./LIMPA PNEUS 500ML.jpeg", type: "bottle" },
+
+            // ACESSÓRIOS - VASSOURA ITALIANA COM IMAGEM ATUALIZADA
+            { id: 800, name: "Vassoura Italiana", category: "Acessórios", retailPrice: 29.99, wholesalePrice: 25.00, color: "maca", image: "./WhatsApp Image 2026-01-19 at 12.09.44.jpeg", type: "vassoura" },
+
+            // NOVO ITEM - BASE GLICERINADA - PREÇO ATUALIZADO
+            { id: 950, name: "Base Glicerinada 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "coco", image: "./base glicerado .jpeg", type: "frasco" },
         ];
 
-        const CATEGORIES = ["Todos", "Limpadores", "Lavanderia", "Cozinha", "Uso Geral", "Automotivo"];
+        const CATEGORIES = ["Todos", "Limpadores", "Lavanderia", "Cozinha", "Uso Geral", "Automotivo", "Acessórios"];
 
         // --- Componente de Imagem Híbrido ---
         const ProductImage = ({ product }) => {
@@ -212,22 +287,31 @@
                     case 'galao': return <SVGGalao5L color={colors} />;
                     case 'pote': return <SVGPote color={colors} />;
                     case 'frasco': return <SVGFrasco color={colors} />;
-                    default: return <SVGBottle2L color={colors} />;
+                    case 'vassoura': return <SVGVassoura color={colors} />;
+                    case 'bottle2l': return <SVGBottle label="2L" color={colors} />;
+                    default: return <SVGBottle label="500ml" color={colors} />;
                 }
             };
 
             return (
-                <div className="relative w-full h-48 bg-gray-50/50 overflow-hidden rounded-t-2xl group-hover:bg-white transition-colors duration-300">
-                    <div className="w-full h-full p-6 flex items-center justify-center transition-transform duration-500 group-hover:scale-105 group-hover:-translate-y-1">
+                <div className="relative w-full h-64 bg-white overflow-hidden rounded-t-2xl border-b border-gray-100">
+                    {/* Badge de Rendimento (Novo) */}
+                    {product.yields && (
+                        <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-md z-10 border border-white animate-pulse-soft">
+                            RENDE {product.yields}
+                        </div>
+                    )}
+                    
+                    <div className="w-full h-full p-2 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
                         {!hasError ? (
                             <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="w-full h-full object-contain drop-shadow-md"
+                                className="w-full h-full object-contain"
                                 onError={() => setHasError(true)}
                             />
                         ) : (
-                            <div className="w-full h-full animate-float">
+                            <div className="w-full h-full animate-float p-4">
                                 {renderIllustration()}
                             </div>
                         )}
@@ -245,6 +329,7 @@
             const [notification, setNotification] = useState(null);
             const [showMobileSearch, setShowMobileSearch] = useState(false);
             const [showScrollTop, setShowScrollTop] = useState(false);
+            const [isSending, setIsSending] = useState(false);
             
             // Novos estados para o checkout completo
             const [customerName, setCustomerName] = useState("");
@@ -301,10 +386,14 @@
                 setTimeout(() => setNotification(null), 2500);
             };
 
-            // Função para finalizar pedido no WhatsApp
-            const handleCheckout = () => {
+            // Função para finalizar pedido
+            const handleCheckout = async () => {
                 if (!customerName.trim()) {
                     showNotification("Por favor, digite seu nome!");
+                    return;
+                }
+                if (!customerPhone.trim()) {
+                    showNotification("Por favor, digite seu telefone!");
                     return;
                 }
                 if (!address.trim() || !neighborhood.trim()) {
@@ -312,6 +401,40 @@
                     return;
                 }
 
+                setIsSending(true);
+
+                const itemsSummary = cart.map(item => {
+                    const price = isWholesale ? item.wholesalePrice : item.retailPrice;
+                    return `${item.quantity}x ${item.name} (R$ ${price})`;
+                }).join(', ');
+
+                const orderData = {
+                    nome: customerName,
+                    telefone: customerPhone,
+                    endereco: address,
+                    bairro: neighborhood,
+                    pagamento: paymentMethod,
+                    itens: itemsSummary,
+                    total: cartTotal,
+                    obs: notes,
+                    modo: isWholesale ? 'Atacado' : 'Varejo'
+                };
+
+                // Envia para o Google Sheets (se configurado)
+                if (APPS_SCRIPT_URL) {
+                    try {
+                        await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: JSON.stringify(orderData)
+                        });
+                    } catch (error) {
+                        console.log("Erro ao salvar na planilha (ignorado para abrir o zap)", error);
+                    }
+                }
+
+                // Monta mensagem do WhatsApp
                 let message = `*NOVO PEDIDO - CANTINHO DA LIMPEZA*\n`;
                 message += `--------------------------------\n`;
                 message += `📅 *Data:* ${new Date().toLocaleDateString()}\n`;
@@ -337,6 +460,8 @@
 
                 const encodedMessage = encodeURIComponent(message);
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`, '_blank');
+                
+                setIsSending(false);
             };
 
             // Filtros
@@ -478,7 +603,7 @@
                     </a>
 
                     {/* --- Marca D'água (Ferreira - Web Designer) --- */}
-                    <div className="fixed bottom-24 md:bottom-6 left-4 z-30 pointer-events-none select-none">
+                    <div className="fixed bottom-24 md:bottom-6 left-4 z-30 pointer-events-none select-none hidden md:block">
                         <div className="bg-white/90 backdrop-blur-md border border-gray-200 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transform hover:scale-105 transition-transform duration-300">
                             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                             <span className="text-[10px] md:text-xs font-black text-gray-700 uppercase tracking-widest">
@@ -625,61 +750,6 @@
                         )}
                     </main>
 
-                    {/* --- Footer Melhorado --- */}
-                    <footer className="bg-white border-t border-gray-200 pt-12 pb-24 md:pb-12 mt-12">
-                        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="bg-orange-100 p-1.5 rounded-lg">
-                                        <i className="ph-fill ph-sparkle text-orange-500 text-xl"></i>
-                                    </div>
-                                    <span className="font-bold text-lg text-gray-800">Cantinho da Limpeza</span>
-                                </div>
-                                <p className="text-sm text-gray-500 leading-relaxed mb-4">
-                                    Sua distribuidora de confiança. Produtos de limpeza de alta performance para sua casa e empresa com os melhores preços da região.
-                                </p>
-                                <div className="flex gap-3">
-                                    <a href="#" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white transition-colors">
-                                        <i className="ph-fill ph-instagram-logo"></i>
-                                    </a>
-                                    <a href="#" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-blue-600 hover:text-white transition-colors">
-                                        <i className="ph-fill ph-facebook-logo"></i>
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <h4 className="font-bold text-gray-800 mb-4">Atendimento</h4>
-                                <ul className="space-y-3 text-sm text-gray-500">
-                                    <li className="flex items-center gap-2">
-                                        <i className="ph-fill ph-whatsapp-logo text-green-500 text-lg"></i>
-                                        (79) 9949-2733
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <i className="ph-fill ph-clock text-gray-400 text-lg"></i>
-                                        Seg à Sab: 08h às 18h
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <i className="ph-fill ph-truck text-gray-400 text-lg"></i>
-                                        Entregas em toda região
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h4 className="font-bold text-gray-800 mb-4">Formas de Pagamento</h4>
-                                <div className="flex flex-wrap gap-2 text-2xl text-gray-400">
-                                    <i className="ph-fill ph-pix-logo hover:text-teal-600 transition-colors"></i>
-                                    <i className="ph-fill ph-credit-card hover:text-blue-600 transition-colors"></i>
-                                    <i className="ph-fill ph-money hover:text-green-600 transition-colors"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="max-w-7xl mx-auto px-6 pt-8 mt-8 border-t border-gray-100 text-center text-xs text-gray-400">
-                            &copy; 2024 Cantinho da Limpeza. Todos os direitos reservados.
-                        </div>
-                    </footer>
-
                     {/* --- Sidebar Carrinho --- */}
                     {isCartOpen && (
                         <div className="fixed inset-0 z-[100] flex justify-end">
@@ -757,6 +827,14 @@
                                                 placeholder="Seu Nome Completo *"
                                                 className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
                                             />
+
+                                            <input 
+                                                type="tel" 
+                                                value={customerPhone}
+                                                onChange={(e) => setCustomerPhone(e.target.value)}
+                                                placeholder="Seu Telefone / WhatsApp *"
+                                                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none text-sm bg-gray-50"
+                                            />
                                             
                                             <div className="grid grid-cols-2 gap-3">
                                                 <input 
@@ -804,11 +882,21 @@
                                         </div>
                                         
                                         <button 
+                                            disabled={isSending}
                                             onClick={handleCheckout}
-                                            className={`w-full py-4 rounded-xl font-bold text-white shadow-lg text-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${isWholesale ? 'bg-blue-600 shadow-blue-200 hover:bg-blue-700' : 'bg-green-600 shadow-green-200 hover:bg-green-700'}`}
+                                            className={`w-full py-4 rounded-xl font-bold text-white shadow-lg text-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${isWholesale ? 'bg-blue-600 shadow-blue-200 hover:bg-blue-700' : 'bg-green-600 shadow-green-200 hover:bg-green-700'} ${isSending ? 'opacity-70 cursor-not-allowed' : ''}`}
                                         >
-                                            <i className="ph-bold ph-whatsapp-logo text-2xl"></i>
-                                            Enviar Pedido no Zap
+                                            {isSending ? (
+                                                <>
+                                                    <i className="ph-bold ph-spinner animate-spin text-2xl"></i>
+                                                    Enviando...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="ph-bold ph-whatsapp-logo text-2xl"></i>
+                                                    Enviar Pedido no Zap
+                                                </>
+                                            )}
                                         </button>
                                     </div>
                                 )}
