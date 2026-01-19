@@ -27,7 +27,6 @@
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse-soft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
         
         .animate-fade-in { animation: fadeIn 0.5s ease-out; }
@@ -45,7 +44,7 @@
 
         // --- Configurações ---
         const LOGO_URL = "./WhatsApp Image 2026-01-18 at 21.38.34.jpeg";
-        const WHATSAPP_NUMBER = "557999492733"; // Número atualizado
+        const WHATSAPP_NUMBER = "557999492733"; 
 
         // --- Paleta de Cores dos Produtos ---
         const PRODUCT_COLORS = {
@@ -137,9 +136,9 @@
             </svg>
         );
 
-         // --- Dados dos Produtos (Com metadados de imagem) ---
+         // --- Dados dos Produtos (Com metadados de imagem e preços atualizados) ---
          const PRODUCTS = [
-             // LIMPADORES 2L (DESINFETANTES) - PREÇO R$ 5,00
+             // LIMPADORES 2L (R$ 5,00 Varejo)
             { id: 2006, name: "Limpador Eucalipto 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_2l.jpg", type: "bottle" },
             { id: 2009, name: "Limpador Palmolive 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "palmolive", image: "./imagens/limpador_palmolive_2l.jpg", type: "bottle" },
             { id: 2013, name: "Limpador Jasmim 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "jasmim", image: "./imagens/limpador_jasmim_2l.jpg", type: "bottle" },
@@ -155,7 +154,7 @@
             { id: 2007, name: "Limpador Lavanda Glade 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "glade", image: "./imagens/limpador_lavanda_glade_2l.jpg", type: "bottle" },
             { id: 2005, name: "Limpador Capim Limão 2L", category: "Limpadores", retailPrice: 5.00, wholesalePrice: 4.00, color: "capim", image: "./imagens/limpador_capim_limao_2l.jpg", type: "bottle" },
 
-            // LIMPADORES 5L
+            // LIMPADORES 5L (R$ 12,00 Varejo)
             { id: 2056, name: "Limpador Eucalipto 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "eucalipto", image: "./imagens/limpador_eucalipto_5l.jpg", type: "galao" },
             { id: 2059, name: "Limpador Jasmim 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "jasmim", image: "./imagens/limpador_jasmim_5l.jpg", type: "galao" },
             { id: 2058, name: "Limpador Lavanda Herbal 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "lavanda", image: "./imagens/limpador_lavanda_herbal_5l.jpg", type: "galao" },
@@ -164,13 +163,13 @@
             { id: 2053, name: "Limpador Kayak 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "kayak", image: "./imagens/limpador_kayak_5l.jpg", type: "galao" },
             { id: 2055, name: "Limpador Capim Limão 5L", category: "Limpadores", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/limpador_capim_limao_5l.jpg", type: "galao" },
 
-            // CONCENTRADOS (BASE DESINFETANTE) - PREÇO R$ 6,00
+            // CONCENTRADOS (R$ 6,00)
             { id: 209, name: "Concentrado Jasmim 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "jasmim", image: "./imagens/concentrado_jasmim_500ml.jpg", type: "frasco" },
             { id: 208, name: "Concentrado Lavanda 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "lavanda", image: "./imagens/concentrado_lavanda_500ml.jpg", type: "frasco" },
             { id: 202, name: "Concentrado Dama Noite 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "dama", image: "./imagens/concentrado_dama_noite_500ml.jpg", type: "frasco" },
             { id: 206, name: "Concentrado Eucalipto 500ml", category: "Limpadores", retailPrice: 6.00, wholesalePrice: 5.00, color: "eucalipto", image: "./imagens/concentrado_eucalipto_500ml.jpg", type: "frasco" },
 
-            // SABÃO LÍQUIDO 2L - PREÇO R$ 6,00
+            // SABÃO LÍQUIDO 2L (R$ 6,00)
             { id: 420, name: "Sabão Líq. Jamaica 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "jamaica", image: "./imagens/sabao_jamaica_2l.jpg", type: "bottle" },
             { id: 450, name: "Sabão Líq. Jamaica 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "jamaica", image: "./imagens/sabao_jamaica_5l.jpg", type: "galao" },
             { id: 421, name: "Sabão Líq. Dove 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "dove", image: "./imagens/sabao_dove_2l.jpg", type: "bottle" },
@@ -178,24 +177,24 @@
             { id: 422, name: "Sabão Líq. Erva Doce 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "erva", image: "./imagens/sabao_erva_doce_2l.jpg", type: "bottle" },
             { id: 453, name: "Sabão Líq. Erva Doce 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "erva", image: "./imagens/sabao_erva_doce_5l.jpg", type: "galao" },
 
-            // USO GERAL (GELEIAS E PASTA) - PREÇOS ATUALIZADOS
+            // USO GERAL (Geleia 1L 11,00 / 5L 25,00 / Pasta 10,00)
             { id: 410, name: "Geleia Pinho 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "pinho", image: "./imagens/geleia_pinho_1l.jpg", type: "pote" },
             { id: 451, name: "Geleia Pinho 5L", category: "Uso Geral", retailPrice: 25.00, wholesalePrice: 20.00, color: "pinho", image: "./Gemini_Generated_Image_178zan178zan178z.jpg", type: "galao" },
             { id: 411, name: "Geleia Lavanda 1L", category: "Uso Geral", retailPrice: 11.00, wholesalePrice: 9.00, color: "lavanda", image: "./imagens/geleia_lavanda_1l.jpg", type: "pote" },
             { id: 900, name: "Pasta Limpa Tudo 500g", category: "Uso Geral", retailPrice: 10.00, wholesalePrice: 8.00, color: "neutro", image: "./imagens/pasta_limpa_tudo.jpg", type: "pote" },
 
-            // LAVA LOUÇAS (DETERGENTES) 2L - PREÇO R$ 6,00
+            // LAVA LOUÇAS 2L (R$ 6,00) e 5L (R$ 12,00)
             { id: 321, name: "Lava Louças Limão 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "capim", image: "./imagens/lava_louca_limao_2l.jpg", type: "bottle" },
             { id: 322, name: "Lava Louças Neutro 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "neutro", image: "./imagens/lava_louca_neutro_2l.jpg", type: "bottle" },
             { id: 320, name: "Lava Louças Maçã 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "maca", image: "./imagens/lava_louca_maca_2l.jpg", type: "bottle" },
             { id: 323, name: "Lava Louças Coco 2L", category: "Cozinha", retailPrice: 6.00, wholesalePrice: 5.00, color: "coco", image: "./imagens/lava_louca_coco_2l.jpg", type: "bottle" },
             { id: 351, name: "Lava Louças Limão 5L", category: "Cozinha", retailPrice: 12.00, wholesalePrice: 10.00, color: "capim", image: "./imagens/lava_louca_limao_5l.jpg", type: "galao" },
             
-            // AMACIANTE 2L - PREÇO R$ 6,00
+            // AMACIANTE 2L (R$ 6,00) e 5L (R$ 13,00)
             { id: 500, name: "Amaciante 2L", category: "Lavanderia", retailPrice: 6.00, wholesalePrice: 5.00, color: "kayak", image: "./imagens/amaciante_2l.jpg", type: "bottle" },
             { id: 501, name: "Amaciante 5L", category: "Lavanderia", retailPrice: 13.00, wholesalePrice: 11.00, color: "kayak", image: "./imagens/amaciante_5l.jpg", type: "galao" },
 
-            // AUTOMOTIVO - PREÇO R$ 6,00 (500ML)
+            // AUTOMOTIVO (500ml R$ 6,00)
             { id: 600, name: "Limpa Pneus 500ml", category: "Automotivo", retailPrice: 6.00, wholesalePrice: 5.00, color: "preto", image: "./imagens/limpa_pneus_500ml.jpg", type: "frasco" },
             { id: 601, name: "Limpa Pneus 1L", category: "Automotivo", retailPrice: 20.00, wholesalePrice: 15.00, color: "preto", image: "./imagens/limpa_pneus_1l.jpg", type: "bottle" },
         ];
@@ -245,7 +244,7 @@
             const [selectedCategory, setSelectedCategory] = useState("Todos");
             const [notification, setNotification] = useState(null);
             const [showMobileSearch, setShowMobileSearch] = useState(false);
-            const [showScrollTop, setShowScrollTop] = useState(false); // Novo estado
+            const [showScrollTop, setShowScrollTop] = useState(false);
             
             // Novos estados para o checkout completo
             const [customerName, setCustomerName] = useState("");
@@ -478,6 +477,16 @@
                         </span>
                     </a>
 
+                    {/* --- Marca D'água (Ferreira - Web Designer) --- */}
+                    <div className="fixed bottom-24 md:bottom-6 left-4 z-30 pointer-events-none select-none">
+                        <div className="bg-white/90 backdrop-blur-md border border-gray-200 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 transform hover:scale-105 transition-transform duration-300">
+                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                            <span className="text-[10px] md:text-xs font-black text-gray-700 uppercase tracking-widest">
+                                @Ferreira <span className="text-blue-500">•</span> Web Designer
+                            </span>
+                        </div>
+                    </div>
+
                     {/* --- Banner Hero --- */}
                     <div className="relative overflow-hidden bg-gray-900">
                         <div className={`absolute inset-0 opacity-80 bg-gradient-to-r ${isWholesale ? 'from-blue-900 via-blue-800 to-indigo-900' : 'from-orange-600 via-amber-600 to-yellow-500'}`}></div>
@@ -485,22 +494,30 @@
                         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '30px 30px'}}></div>
                         
                         <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8 md:gap-16">
-                            <div className="flex-1 text-center md:text-left text-white z-10">
-                                <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold tracking-wider uppercase mb-4 border border-white/30">
-                                    {isWholesale ? 'Preços de Fábrica' : 'Entrega Rápida'}
+                            <div className="flex-1 text-center md:text-left text-white z-10 relative">
+                                
+                                {/* LOGO WATERMARK - Posicionado atrás do texto */}
+                                <div className="absolute top-1/2 left-1/2 md:left-10 transform -translate-x-1/2 -translate-y-1/2 w-64 md:w-96 opacity-10 pointer-events-none select-none z-0 mix-blend-overlay">
+                                    <img src={LOGO_URL} alt="" className="w-full h-full object-contain grayscale brightness-200" onError={(e) => e.target.style.display='none'} />
                                 </div>
-                                <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-lg">
-                                    {isWholesale ? 'ECONOMIA' : 'LIMPEZA'} <br/>
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
-                                        {isWholesale ? 'GARANTIDA' : 'PROFISSIONAL'}
-                                    </span>
-                                </h2>
-                                <p className="text-lg md:text-xl text-white/90 mb-8 max-w-lg mx-auto md:mx-0 font-medium">
-                                    {isWholesale ? 'Abasteça seu negócio com as melhores marcas.' : 'Sua casa brilhando com produtos de alta performance.'}
-                                </p>
-                                <button onClick={() => document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})} className="bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2 mx-auto md:mx-0">
-                                    Ver Ofertas <i className="ph-bold ph-arrow-right"></i>
-                                </button>
+
+                                <div className="relative z-10">
+                                    <div className="inline-block px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-bold tracking-wider uppercase mb-4 border border-white/30">
+                                        {isWholesale ? 'Preços de Fábrica' : 'Entrega Rápida'}
+                                    </div>
+                                    <h2 className="text-4xl md:text-6xl font-black mb-4 leading-tight drop-shadow-lg">
+                                        {isWholesale ? 'ECONOMIA' : 'LIMPEZA'} <br/>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
+                                            {isWholesale ? 'GARANTIDA' : 'PROFISSIONAL'}
+                                        </span>
+                                    </h2>
+                                    <p className="text-lg md:text-xl text-white/90 mb-8 max-w-lg mx-auto md:mx-0 font-medium">
+                                        {isWholesale ? 'Abasteça seu negócio com as melhores marcas.' : 'Sua casa brilhando com produtos de alta performance.'}
+                                    </p>
+                                    <button onClick={() => document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})} className="bg-white text-gray-900 px-8 py-3.5 rounded-full font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center gap-2 mx-auto md:mx-0">
+                                        Ver Ofertas <i className="ph-bold ph-arrow-right"></i>
+                                    </button>
+                                </div>
                             </div>
                             {/* Imagem Ilustrativa Direita (Escondida em telas muito pequenas) */}
                             <div className="hidden md:block flex-1 relative">
@@ -551,7 +568,15 @@
 
                     {/* --- Grid de Produtos --- */}
                     <main className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-                        {/* ... existing products grid code ... */}
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-xl md:text-2xl font-bold text-gray-800">
+                                {selectedCategory === "Todos" ? "Destaques da Loja" : selectedCategory}
+                            </h3>
+                            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full shadow-sm border border-gray-100">
+                                {filteredProducts.length} itens
+                            </span>
+                        </div>
+
                         {filteredProducts.length === 0 ? (
                             <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-300">
                                 <i className="ph ph-package text-6xl text-gray-300 mb-4"></i>
@@ -679,7 +704,6 @@
                                         <div className="h-full flex flex-col items-center justify-center text-center p-8 opacity-50">
                                             <i className="ph ph-shopping-cart text-6xl mb-4 text-gray-300"></i>
                                             <p className="font-medium">Carrinho vazio</p>
-                                            <button onClick={() => setIsCartOpen(false)} className="mt-4 text-orange-500 font-bold hover:underline">Começar a comprar</button>
                                         </div>
                                     ) : (
                                         cart.map(item => (
